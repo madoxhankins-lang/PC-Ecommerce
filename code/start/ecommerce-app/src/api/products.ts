@@ -1,27 +1,25 @@
-import { Product } from '../types'; // Assuming you have a Product type defined
+import type { Product } from '../types';
 
 export const fetchProducts = async (): Promise<Product[]> => {
-  return [
-    {
-      id: '1',
-      name: 'Wireless Headphones',
-      price: 149.99,
-      image: 'https://m.media-amazon.com/images/I/71PtY7s-ODL._AC_SX679_.jpg',
-      description: 'Headset',
-    },
-    {
-      id: '2',
-      name: 'Smart Watch',
-      price: 199.99,
-      image: 'https://m.media-amazon.com/images/I/61sTOZCxuUL._AC_SY879_.jpg',
-      description: 'Fitness tracking & heart rate monitor',
-    },
-    {
-      id: '3',
-      name: 'Bluetooth Speaker',
-      price: 89.99,
-      image: 'https://m.media-amazon.com/images/I/71HdLDJEEUL._AC_SX522_.jpg',
-      description: 'Portable JBL Waterproof Speaker',
-    },
-  ];
+  const url = new URL('/api/products', window.location.origin);
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Could not load products (${response.status})`);
+  }
+
+  const data: { products: Product[] } = await response.json();
+  return data.products;
+};
+
+export const fetchProduct = async (productId: string): Promise<Product> => {
+  const url = new URL(`/api/products/${encodeURIComponent(productId)}`, window.location.origin);
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Could not load product (${response.status})`);
+  }
+
+  const data: { product: Product } = await response.json();
+  return data.product;
 };
